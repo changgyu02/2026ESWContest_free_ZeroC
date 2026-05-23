@@ -1,0 +1,57 @@
+amcl:
+  ros__parameters:
+    use_sim_time: false
+
+    # 파티클 수
+    min_particles: 500
+    max_particles: 2000
+
+    # 차동 구동 모델
+    robot_model_type: nav2_amcl::DifferentialMotionModel
+    alpha1: 0.2   # 회전 시 회전 노이즈
+    alpha2: 0.2   # 직진 시 회전 노이즈
+    alpha3: 0.2   # 직진 시 직진 노이즈
+    alpha4: 0.2   # 회전 시 직진 노이즈
+    alpha5: 0.2
+
+    # 프레임
+    base_frame_id: base_link
+    odom_frame_id: odom
+    global_frame_id: map
+
+    # 레이저 설정 (RPLidar A1)
+    scan_topic: /scan
+    laser_model_type: likelihood_field
+    laser_min_range: 0.2
+    laser_max_range: 12.0
+    max_beams: 60
+    laser_likelihood_max_dist: 2.0
+
+    # 업데이트 조건
+    update_min_d: 0.25      # 0.25m 이동 시 업데이트
+    update_min_a: 0.2       # 0.2rad 회전 시 업데이트
+    resample_interval: 1
+
+    # TF
+    tf_broadcast: true
+    transform_tolerance: 1.0
+
+    # 초기 위치 (맵 원점)
+    set_initial_pose: true
+    initial_pose:
+      x: 0.0
+      y: 0.0
+      yaw: 0.0
+
+    # 기타
+    z_hit: 0.5
+    z_short: 0.05
+    z_max: 0.05
+    z_rand: 0.5
+    sigma_hit: 0.2
+    lambda_short: 0.1
+    recovery_alpha_slow: 0.0
+    recovery_alpha_fast: 0.0
+    pf_err: 0.05
+    pf_z: 0.99
+    save_pose_rate: 0.5

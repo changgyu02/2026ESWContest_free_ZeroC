@@ -1,0 +1,28 @@
+ekf_node:
+  ros__parameters:
+    frequency: 30.0
+    sensor_timeout: 0.1
+    two_d_mode: true      # 실내 2D 환경
+    publish_tf: true
+
+    odom_frame: odom
+    base_link_frame: base_link
+    world_frame: odom
+
+    # 오도메트리 입력 (속도 기반 - 절대 위치 대신 vx/vyaw 사용)
+    odom0: /odom
+    odom0_config: [false, false, false,   # x, y, z
+                   false, false, false,   # roll, pitch, yaw
+                   true,  false, false,   # vx, vy, vz
+                   false, false, true,    # vroll, vpitch, vyaw
+                   false, false, false]   # ax, ay, az
+
+    # IMU 입력
+    imu0: /imu
+    imu0_config: [false, false, false,
+                  false, false, false,
+                  false, false, false,
+                  false, false, true,    # vyaw
+                  true,  false, false]   # ax
+
+    imu0_differential: true
