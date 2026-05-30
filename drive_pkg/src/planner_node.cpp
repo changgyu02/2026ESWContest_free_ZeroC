@@ -51,7 +51,6 @@ public:
 
     // ===== 발행 =====
     path_pub_ = this->create_publisher<nav_msgs::msg::Path>("/planned_path", 10);
-    mode_pub_ = this->create_publisher<std_msgs::msg::String>("/robot_mode", 10);
 
     RCLCPP_INFO(this->get_logger(), "planner_node initialized");
   }
@@ -62,7 +61,6 @@ private:
   rclcpp::Subscription<geometry_msgs::msg::PoseStamped>::SharedPtr               goal_sub_;
   rclcpp::Subscription<std_msgs::msg::String>::SharedPtr                         mode_sub_;
   rclcpp::Publisher<nav_msgs::msg::Path>::SharedPtr                              path_pub_;
-  rclcpp::Publisher<std_msgs::msg::String>::SharedPtr                            mode_pub_;
 
   // ===== 상태 =====
   geometry_msgs::msg::Pose        current_pose_;
@@ -107,11 +105,8 @@ private:
     RCLCPP_INFO(this->get_logger(), "New goal: (%.2f, %.2f)",
                 goal_pose_.pose.position.x, goal_pose_.pose.position.y);
 
-    // goal 수신 시 자동으로 DRIVING 모드 전환
     if (robot_mode_ != "DRIVING") {
-      robot_mode_ = "DRIVING";
-      publish_mode("DRIVING");
-      RCLCPP_INFO(this->get_logger(), "goal received -> DRIVING");
+      RCLCPP_INFO(this->get_logger(), "goal received (waiting for DRIVING from mission_node)");
     }
 
     try_plan();
@@ -124,7 +119,7 @@ private:
     robot_mode_ = msg->data;
     RCLCPP_INFO(this->get_logger(), "robot_mode -> %s", robot_mode_.c_str());
 
-    // STANDBY / ARRIVED 시 빈 경로 발행
+    // STANDBY / ARRIVED 시 빈 경로 발행 (RETURNING은 계속 주행)
     if (robot_mode_ == "STANDBY" || robot_mode_ == "ARRIVED") {
       publish_empty_path();
     }
@@ -231,7 +226,7 @@ private:
   // ===== 경로 생성 =====
   void try_plan() {
     if (!has_pose_ || !has_goal_ || !map_ready()) return;
-    if (robot_mode_ != "DRIVING") return;
+    if (robot_mode_ != "DRIVING" && robot_mode_ != "RETURNING") return;
 
     cv::Point start_pix = world_to_pixel(current_pose_.position.x,
                                           current_pose_.position.y);
@@ -426,11 +421,6 @@ private:
     path_pub_->publish(p);
   }
 
-  void publish_mode(const std::string &mode) {
-    std_msgs::msg::String msg;
-    msg.data = mode;
-    mode_pub_->publish(msg);
-  }
 };
 
 int main(int argc, char **argv) {

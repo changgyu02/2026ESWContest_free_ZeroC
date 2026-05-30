@@ -64,7 +64,7 @@ def generate_launch_description():
             }]
         ),
 
-        # ===== 6. odom_publisher (TF 직접 발행 - 맵핑용) =====
+        # ===== 6. odom_publisher (TF는 EKF가 담당) =====
         Node(
             package='sensor_pkg',
             executable='odom_publisher',
@@ -73,8 +73,22 @@ def generate_launch_description():
             parameters=[{
                 'wheel_radius': 0.08,
                 'wheel_base':   0.19,
-                'publish_tf':   True
+                'publish_tf':   False
             }]
+        ),
+
+        # ===== 6.5. EKF (odom + IMU 융합 → TF 발행) =====
+        Node(
+            package='robot_localization',
+            executable='ekf_node',
+            name='ekf_node',
+            output='screen',
+            parameters=[
+                os.path.join(
+                    get_package_share_directory('sensor_pkg'),
+                    'config', 'ekf_params.yaml'
+                )
+            ]
         ),
 
         # ===== 7. 모터 드라이버 =====

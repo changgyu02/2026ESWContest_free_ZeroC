@@ -18,3 +18,5 @@ __pycache__/
 .DS_Store
 Thumbs.db
 rplidar_ros/
+rplidar_ros/
+.claude/

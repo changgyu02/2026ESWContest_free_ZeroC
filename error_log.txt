@@ -1,0 +1,11 @@
+# 신고지 이동 → 경고음 + LED 점멸 ON
+ros2 topic pub --once /robot_mode std_msgs/msg/String "{data: 'DRIVING'}"
+
+# 신고지 도착 → 경고음 + LED OFF
+ros2 topic pub --once /robot_mode std_msgs/msg/String "{data: 'ARRIVED'}"
+
+# 원점 복귀 → 조용히
+ros2 topic pub --once /robot_mode std_msgs/msg/String "{data: 'RETURNING'}"
+
+# 대기
+ros2 topic pub --once /robot_mode std_msgs/msg/String "{data: 'STANDBY'}"

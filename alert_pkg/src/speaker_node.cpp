@@ -13,9 +13,9 @@ public:
 
     // ===== 파라미터 =====
     alert_mp3_   = this->declare_parameter<std::string>(
-                     "alert_mp3", "/home/lee/sounds/alert.mp3");    // 주행 중 경고음
+                     "alert_mp3", "/home/changgyu/ros2_ws/src/alert.mp3");    // 주행 중 경고음
     arrived_mp3_ = this->declare_parameter<std::string>(
-                     "arrived_mp3", "/home/lee/sounds/arrived.mp3"); // 도착 알림음
+                     "arrived_mp3", "/home/changgyu/ros2_ws/src/arrived.mp3"); // 도착 알림음
 
     // ===== 구독 =====
     mode_sub_ = this->create_subscription<std_msgs::msg::String>(
@@ -62,8 +62,8 @@ private:
       // 도착 알림음 1회 재생
       start_play(arrived_mp3_, false);
 
-    } else if (current_mode_ == "STANDBY") {
-      // 정지
+    } else if (current_mode_ == "RETURNING" || current_mode_ == "STANDBY") {
+      // 복귀 중 / 대기 → 경고음 중지
       stop_play();
     }
   }

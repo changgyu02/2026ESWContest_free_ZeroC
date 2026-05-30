@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<package format="3">
+  <name>aidgo_bringup</name>
+  <version>0.0.0</version>
+  <description>AidGo full system bringup</description>
+  <maintainer email="rabbit021127@gmail.com">changgyu</maintainer>
+  <license>Apache-2.0</license>
+
+  <buildtool_depend>ament_cmake</buildtool_depend>
+
+  <exec_depend>sensor_pkg</exec_depend>
+  <exec_depend>drive_pkg</exec_depend>
+  <exec_depend>core_pkg</exec_depend>
+
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
+</package>

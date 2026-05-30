@@ -49,8 +49,8 @@ public:
             std::bind(&ControllerNode::mode_cb, this, std::placeholders::_1));
 
         // ===== 발행 =====
-        cmd_pub_  = this->create_publisher<geometry_msgs::msg::Twist>("/cmd_vel", 10);
-        mode_pub_ = this->create_publisher<std_msgs::msg::String>("/robot_mode", 10);
+        cmd_pub_          = this->create_publisher<geometry_msgs::msg::Twist>("/cmd_vel", 10);
+        goal_reached_pub_ = this->create_publisher<std_msgs::msg::Bool>("/goal_reached", 10);
 
         // ===== 제어 루프 타이머 =====
         timer_ = this->create_wall_timer(
@@ -69,7 +69,7 @@ private:
     rclcpp::Subscription<std_msgs::msg::Bool>::SharedPtr       obstacle_sub_;
     rclcpp::Subscription<std_msgs::msg::String>::SharedPtr     mode_sub_;
     rclcpp::Publisher<geometry_msgs::msg::Twist>::SharedPtr    cmd_pub_;
-    rclcpp::Publisher<std_msgs::msg::String>::SharedPtr        mode_pub_;
+    rclcpp::Publisher<std_msgs::msg::Bool>::SharedPtr          goal_reached_pub_;
     rclcpp::TimerBase::SharedPtr                               timer_;
 
     // ===== 상태 =====
@@ -129,6 +129,7 @@ private:
                 last_v_ = 0.0;
                 last_w_ = 0.0;
             }
+            // RETURNING은 램핑 유지 (정지 없이 계속 주행)
         }
     }
 
@@ -145,8 +146,8 @@ private:
             return;
         }
 
-        // DRIVING 모드
-        if (robot_mode_ == "DRIVING") {
+        // DRIVING / RETURNING 모드
+        if (robot_mode_ == "DRIVING" || robot_mode_ == "RETURNING") {
             // 장애물 감지 시 정지
             if (obstacle_) {
                 publish_zero();
@@ -161,8 +162,10 @@ private:
             // 도착 판단
             if (is_goal_reached()) {
                 publish_zero();
-                publish_mode("ARRIVED");
-                RCLCPP_INFO(this->get_logger(), "Goal reached -> ARRIVED");
+                std_msgs::msg::Bool reached;
+                reached.data = true;
+                goal_reached_pub_->publish(reached);
+                RCLCPP_INFO(this->get_logger(), "Goal reached -> /goal_reached");
                 return;
             }
 
@@ -290,11 +293,6 @@ private:
         last_w_ = 0.0;
     }
 
-    void publish_mode(const std::string &mode) {
-        std_msgs::msg::String msg;
-        msg.data = mode;
-        mode_pub_->publish(msg);
-    }
 };
 
 int main(int argc, char **argv) {
