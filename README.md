@@ -1,4 +1,4 @@
-# 2026_Capstone_Design_ZeroSada
+# 2026_Capstone_Design_Zero 사이다
 
 # 🏷️ Intro
 **ZERO 사이다** 팀이 개발한 시스템은 **AidGO(자율주행 Aid Kit 이송 로봇)**로, 실내 공간에서 발생할 수 있는 낙상, 심정지 등 응급상황 발생 시 **CCTV를 통한 실시간 이벤트 감지 → Main Server 명령 전송 → AidGO 자율주행 → 응급 Kit(AED 및 구급상자) 전달 및 안내 → 상황 종료 후 원점 복귀** 과정을 자동화하는 지능형 응급 지원 시스템입니다[cite: 1, 2].
